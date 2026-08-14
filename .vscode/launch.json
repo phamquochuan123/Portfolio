@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "PortfolioApplication",
+            "request": "launch",
+            "mainClass": "com.example.Portfolio.PortfolioApplication",
+            "projectName": "portfolio",
+            "envFile": "${workspaceFolder}/PortfolioBE/.env"
+        }
+    ]
+}
