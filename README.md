@@ -25,8 +25,8 @@ API chạy ở `http://localhost:8080`.
 
 | Method | Đường dẫn | Mô tả |
 |---|---|---|
-| GET | `/api/projects` | Danh sách project đã publish |
-| GET | `/api/projects/{slug}` | Chi tiết một project |
+| GET | `/api/v1/projects` | Danh sách project đã publish |
+| GET | `/api/v1/projects/{slug}` | Chi tiết một project |
 
 ## Trạng thái
 
