@@ -1,35 +1,39 @@
-HELP.md
+# ===== Build =====
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+!.mvn/wrapper/maven-wrapper.jar
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+*.jar
+*.war
+*.class
 
-### VS Code ###
-.vscode/
-
+# ===== Bi mat - KHONG BAO GIO commit =====
 .env
+.env.*
+!.env.example
+application-local.yml
+application-local.yaml
+application-secret.yml
+*.pem
+*.key
+*.p12
+
+# ===== IDE =====
+.idea/
+*.iml
+*.iws
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
+.settings/
+.classpath
+.project
+
+# ===== He dieu hanh =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Log & tam =====
+logs/
+*.log
+*.tmp
