@@ -1,4 +1,4 @@
-package com.example.Portfolio.controlller;
+package com.example.Portfolio.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,10 +11,9 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("api/v1/projects")
+@RequestMapping("api/projects")
 public class ProjectController {
     private final ProjectService projectService;
 

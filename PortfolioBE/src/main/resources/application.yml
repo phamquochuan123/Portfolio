@@ -18,6 +18,13 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+app:
+  jwt:
+    expiration-ms: 3600000
 
 server:
   port: 8080
@@ -34,3 +41,4 @@ management:
 logging:
   level:
     org.hibernate.SQL: debug
+
