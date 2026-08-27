@@ -1,14 +1,17 @@
 package com.example.Portfolio.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.Portfolio.dto.ProjectDetailResponse;
+import com.example.Portfolio.dto.ProjectRequest;
 import com.example.Portfolio.dto.ProjectSummaryResponse;
 import com.example.Portfolio.entity.Project;
 import com.example.Portfolio.entity.ProjectStatus;
+import com.example.Portfolio.exception.DuplicateResourceException;
 import com.example.Portfolio.exception.ResourceNotFoundException;
 import com.example.Portfolio.mapper.ProjectMapper;
 import com.example.Portfolio.repository.ProjectRepository;
@@ -36,6 +39,66 @@ public class ProjectService {
                 .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay project voi slug: " + slug));
         return ProjectMapper.toDetail(project);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectDetailResponse> getAllForAdmin() {
+        return projectRepository
+                .findAll()
+                .stream()
+                .map(ProjectMapper::toDetail)
+                .toList();
+    }
+
+    @Transactional
+    public ProjectDetailResponse create(ProjectRequest request) {
+        if (projectRepository.existsBySlug(request.slug())) {
+            throw new DuplicateResourceException("Slug đã tồn tại" + request.slug());
+        }
+
+        Project project = new Project(request.title(), request.slug());
+        applyChanges(project, request);
+
+        Project saved = projectRepository.save(project);
+        return ProjectMapper.toDetail(saved);
+    }
+
+    @Transactional
+    public ProjectDetailResponse update(Long id, ProjectRequest request) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy project với id: " + id));
+
+        if (!project.getSlug().equals(request.slug())
+                && projectRepository.existsBySlug(request.slug())) {
+            throw new DuplicateResourceException("Slug đã tồn tạil: " + request.slug());
+        }
+        project.setTitle(request.title());
+        project.setSlug(request.slug());
+        applyChanges(project, request);
+        return ProjectMapper.toDetail(project);
+    }
+
+    @Transactional
+    public void softDelete(Long id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy project với id: " + id));
+
+        project.setDeleted(true);
+    }
+
+    private void applyChanges(Project project, ProjectRequest request) {
+        project.setSummary(request.summary());
+        project.setContent(request.content());
+        project.setThumbnailUrl(request.thumbnailUrl());
+        project.setDemoUrl(request.demoUrl());
+        project.setRepoUrl(request.repoUrl());
+        project.setStatus(request.status());
+
+        boolean vuaPublish = request.status() == ProjectStatus.PUBLISHED
+                && project.getPublishedAt() == null;
+        if (vuaPublish) {
+            project.setPublishedAt(LocalDateTime.now());
+        }
     }
 
 }

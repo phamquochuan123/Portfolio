@@ -1,4 +1,5 @@
-### Dang nhap dung
+### 1. Dang nhap - LUU Y dong "# @name login" phia tren
+# @name login
 POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
@@ -7,20 +8,55 @@ Content-Type: application/json
   "password": "Admin@12345"
 }
 
-### Sai mat khau
-POST http://localhost:8080/api/auth/login
+### 2. Danh sach admin - KHONG token (phai 401)
+GET http://localhost:8080/api/admin/projects
+
+### 3. Danh sach admin - CO token (phai 200, thay ca DRAFT)
+GET http://localhost:8080/api/admin/projects
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### 4. Tao project moi (phai 201)
+POST http://localhost:8080/api/admin/projects
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.accessToken}}
 
 {
-  "email": "admin@portfolio.local",
-  "password": "sai-mat-khau"
+  "title": "Du an thu nghiem",
+  "slug": "du-an-thu-nghiem",
+  "summary": "Tao tu API admin",
+  "content": "Noi dung chi tiet",
+  "status": "PUBLISHED"
 }
 
-### Email rong
-POST http://localhost:8080/api/auth/login
+### 5. Tao trung slug (phai 409)
+POST http://localhost:8080/api/admin/projects
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.accessToken}}
 
 {
-  "email": "",
-  "password": "Admin@12345"
+  "title": "Trung slug",
+  "slug": "du-an-thu-nghiem",
+  "status": "DRAFT"
 }
+
+### 6. Slug sai dinh dang (phai 400)
+POST http://localhost:8080/api/admin/projects
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.accessToken}}
+
+{
+  "title": "Slug xau",
+  "slug": "Slug Co Khoang Trang",
+  "status": "DRAFT"
+}
+
+### 7. Token bi sua (phai 401)
+GET http://localhost:8080/api/admin/projects
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoYWNrZXIifQ.chu-ky-gia
+
+### 8. Xoa mem project id 4 (phai 204)
+DELETE http://localhost:8080/api/admin/projects/4
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### 9. API cong khai van chay binh thuong
+GET http://localhost:8080/api/projects
