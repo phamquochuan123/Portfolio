@@ -21,8 +21,8 @@ Content-Type: application/json
 Authorization: Bearer {{login.response.body.accessToken}}
 
 {
-  "title": "Du an thu nghiem",
-  "slug": "du-an-thu-nghiem",
+  "title": "Du an thu nghiem-2",
+  "slug": "du-an-thu-nghiem-2",
   "summary": "Tao tu API admin",
   "content": "Noi dung chi tiet",
   "status": "PUBLISHED"

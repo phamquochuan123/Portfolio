@@ -7,6 +7,8 @@ import com.example.Portfolio.dto.ProjectDetailResponse;
 import com.example.Portfolio.dto.ProjectRequest;
 import com.example.Portfolio.service.ProjectService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/admin/projects")
+@Tag(name = "Admin - Project", description = "Quan ly project, yeu cau ROLE_ADMIN")
+@SecurityRequirement(name = "bearerAuth")
 public class AdminProjectController {
 
     private final ProjectService projectService;

@@ -7,7 +7,7 @@
 
 - [ ] **Project CRUD** — tạo, xem, sửa, xoá mềm project
 - [ ] **Auth / JWT** — đăng nhập admin, phân quyền endpoint
-- [ ] **Contact** — form liên hệ, lưu tin nhắn, trang admin đọc tin
+- [x] **Contact** — form liên hệ, lưu tin nhắn, trang admin đọc tin
 - [ ] **Media / Cloudinary** — upload ảnh thumbnail cho project
 - [ ] **Redis cache** — cache danh sách project công khai
 
