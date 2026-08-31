@@ -58,6 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (JwtException | IllegalArgumentException ex) {
+            logger.warn("Token bị từ chối: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
             SecurityContextHolder.clearContext();
         }
         filterChain.doFilter(request, response);

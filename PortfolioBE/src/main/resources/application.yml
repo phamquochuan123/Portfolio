@@ -26,6 +26,10 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
 
 app:
   jwt:
@@ -55,5 +59,11 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
     display-request-duration: true
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
+  folder: portfolio
     
 

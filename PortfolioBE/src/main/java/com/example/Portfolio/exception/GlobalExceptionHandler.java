@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import com.example.Portfolio.exception.DuplicateResourceException;
 import com.example.Portfolio.dto.ErrorResponse;
 
 @RestControllerAdvice
@@ -71,6 +71,19 @@ public class GlobalExceptionHandler {
 
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
-
     }
+
+    @ExceptionHandler(InvalidFileException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFile(InvalidFileException e) {
+        return ResponseEntity.badRequest().body(
+                new ErrorResponse(400, "INVALID_FILE", e.getMessage(), LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleTooLarge(MaxUploadSizeExceededException e) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(
+                new ErrorResponse(413, "File_TOO_LARGE", "File vượt quá giới hạn cho phép",
+                        LocalDateTime.now()));
+    }
+
 }
