@@ -3,6 +3,10 @@ package com.example.Portfolio.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,7 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
+    @Cacheable(value = "projects:list", key = "'all'")
     @Transactional(readOnly = true)
     public List<ProjectSummaryResponse> getPublishedProjects() {
         return projectRepository
@@ -33,6 +38,7 @@ public class ProjectService {
                 .toList();
     }
 
+    @Cacheable(value = "projects:detail", key = "#slug")
     @Transactional(readOnly = true)
     public ProjectDetailResponse getBySlug(String slug) {
         Project project = projectRepository.findBySlug(slug)
@@ -50,6 +56,10 @@ public class ProjectService {
                 .toList();
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "projects:list", allEntries = true),
+            @CacheEvict(value = "projects:detail", allEntries = true)
+    })
     @Transactional
     public ProjectDetailResponse create(ProjectRequest request) {
         if (projectRepository.existsBySlug(request.slug())) {
@@ -63,6 +73,10 @@ public class ProjectService {
         return ProjectMapper.toDetail(saved);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "projects:list", allEntries = true),
+            @CacheEvict(value = "projects:detail", allEntries = true)
+    })
     @Transactional
     public ProjectDetailResponse update(Long id, ProjectRequest request) {
         Project project = projectRepository.findById(id)
@@ -78,6 +92,10 @@ public class ProjectService {
         return ProjectMapper.toDetail(project);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "projects:list", allEntries = true),
+            @CacheEvict(value = "projects:detail", allEntries = true)
+    })
     @Transactional
     public void softDelete(Long id) {
         Project project = projectRepository.findById(id)

@@ -30,10 +30,20 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 10MB
-
+  
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
+    
 app:
   jwt:
+    secret: ${APP_JWT_SECRET}
     expiration-ms: 3600000
+  cache:
+    ttl-minutes: 10
 
 server:
   port: 8080
@@ -65,5 +75,7 @@ cloudinary:
   api-key: ${CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET}
   folder: portfolio
+
+
     
 

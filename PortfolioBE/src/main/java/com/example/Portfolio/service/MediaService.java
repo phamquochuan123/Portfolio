@@ -27,6 +27,7 @@ public class MediaService {
     private final CloudinaryService cloudinaryService;
     private final ImageValidator imageValidator;
 
+    @Transactional
     public MediaResponse upload(MultipartFile file, Long projectId, String altText) throws IOException {
         imageValidator.validate(file);
 
@@ -45,6 +46,7 @@ public class MediaService {
         }
     }
 
+    @Transactional
     protected MediaResponse persist(CloudinaryService.UploadResult uploaded,
             Project project, String originalFilename, String altText) {
 
@@ -54,7 +56,7 @@ public class MediaService {
         entity.setUrl(uploaded.url());
         entity.setFormat(uploaded.format());
         entity.setWidth(uploaded.width());
-        entity.setHeight(uploaded.heigth());
+        entity.setHeight(uploaded.height());
         entity.setBytes(uploaded.bytes());
         entity.setOriginalFilename(originalFilename);
         entity.setAltText(altText);

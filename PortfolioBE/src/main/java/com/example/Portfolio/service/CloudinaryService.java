@@ -39,7 +39,7 @@ public class CloudinaryService {
                 (String) result.get("secure_url"),
                 (String) result.get("format"),
                 (Integer) result.get("width"),
-                (Integer) result.get("heigth"),
+                (Integer) result.get("height"),
                 ((Number) result.get("bytes")).longValue());
     }
 
@@ -53,6 +53,6 @@ public class CloudinaryService {
 
     public record UploadResult(
             String publicId, String url, String format,
-            Integer width, Integer heigth, Long bytes) {
+            Integer width, Integer height, Long bytes) {
     }
 }
