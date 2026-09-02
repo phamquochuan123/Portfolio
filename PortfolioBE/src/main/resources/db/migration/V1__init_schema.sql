@@ -32,14 +32,3 @@ CREATE TABLE projects (
 CREATE INDEX idx_projects_status ON projects (status)
 WHERE deleted = false;
 CREATE INDEX idx_projects_slug ON projects (slug);
-CREATE TABLE contact_messages (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    subject VARCHAR(255),
-    message TEXT NOT NULL,
-    is_read BOOLEAN NOT NULL DEFAULT false,
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP NOT NULL DEFAULT now(),
-    deleted BOOLEAN NOT NULL DEFAULT false
-);
