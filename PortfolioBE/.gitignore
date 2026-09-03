@@ -16,6 +16,9 @@ application-secret.yml
 *.pem
 *.key
 *.p12
+node_modules/
+dist/
+.env.local
 
 # ===== IDE =====
 .idea/
