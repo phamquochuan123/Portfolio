@@ -1,7 +1,9 @@
 package com.example.Portfolio.service;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,6 +17,9 @@ import com.example.Portfolio.dto.ProjectRequest;
 import com.example.Portfolio.dto.ProjectSummaryResponse;
 import com.example.Portfolio.entity.Project;
 import com.example.Portfolio.entity.ProjectStatus;
+import com.example.Portfolio.entity.Tag;
+import com.example.Portfolio.repository.TagRepository;
+import com.example.Portfolio.util.TagSlug;
 import com.example.Portfolio.exception.DuplicateResourceException;
 import com.example.Portfolio.exception.ResourceNotFoundException;
 import com.example.Portfolio.mapper.ProjectMapper;
@@ -23,19 +28,28 @@ import com.example.Portfolio.repository.ProjectRepository;
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final TagRepository tagRepository;
 
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository, TagRepository tagRepository) {
         this.projectRepository = projectRepository;
+        this.tagRepository = tagRepository;
     }
 
-    @Cacheable(value = "projects:list", key = "'all'")
+    /** Khoá cache tách theo tag để danh sách lọc và danh sách đầy đủ không đè lên nhau. */
+    @Cacheable(value = "projects:list", key = "#tagSlug == null || #tagSlug.isBlank() ? 'all' : 'tag:' + #tagSlug")
     @Transactional(readOnly = true)
-    public List<ProjectSummaryResponse> getPublishedProjects() {
-        return projectRepository
-                .findByStatusOrderByPublishedAtDesc(ProjectStatus.PUBLISHED)
-                .stream()
-                .map(ProjectMapper::toSummary)
-                .toList();
+    public List<ProjectSummaryResponse> getPublishedProjects(String tagSlug) {
+        List<Project> projects = (tagSlug == null || tagSlug.isBlank())
+                ? projectRepository.findByStatusOrderByPublishedAtDesc(ProjectStatus.PUBLISHED)
+                : projectRepository.findByStatusAndTagSlug(ProjectStatus.PUBLISHED, tagSlug);
+
+        return projects.stream().map(ProjectMapper::toSummary).toList();
+    }
+
+    /** Đếm lượt xem tách khỏi getBySlug để cache hit vẫn được tính. */
+    @Transactional
+    public void recordView(String slug) {
+        projectRepository.incrementViewCount(slug);
     }
 
     @Cacheable(value = "projects:detail", key = "#slug")
@@ -111,12 +125,38 @@ public class ProjectService {
         project.setDemoUrl(request.demoUrl());
         project.setRepoUrl(request.repoUrl());
         project.setStatus(request.status());
+        applyTags(project, request.tagsOrEmpty());
 
         boolean vuaPublish = request.status() == ProjectStatus.PUBLISHED
                 && project.getPublishedAt() == null;
         if (vuaPublish) {
             project.setPublishedAt(LocalDateTime.now());
         }
+    }
+
+    /**
+     * Người dùng gõ tên tag; slug sinh từ tên. Tag nào chưa có thì tạo mới, có rồi
+     * thì dùng lại, nên hai dự án gõ "Spring Boot" và "spring boot" vẫn về cùng một tag.
+     */
+    private void applyTags(Project project, List<String> tagNames) {
+        Set<Tag> resolved = new LinkedHashSet<>();
+
+        for (String raw : tagNames) {
+            if (raw == null) {
+                continue;
+            }
+            String name = raw.trim();
+            String slug = TagSlug.of(name);
+            if (name.isEmpty() || slug.isEmpty()) {
+                continue;
+            }
+            Tag tag = tagRepository.findBySlug(slug)
+                    .orElseGet(() -> tagRepository.save(new Tag(name, slug)));
+            resolved.add(tag);
+        }
+
+        project.getTags().clear();
+        project.getTags().addAll(resolved);
     }
 
 }

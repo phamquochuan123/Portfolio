@@ -1,5 +1,7 @@
 package com.example.Portfolio.dto;
 
+import java.util.List;
+
 import com.example.Portfolio.entity.ProjectStatus;
 
 import jakarta.validation.constraints.NotBlank;
@@ -23,8 +25,13 @@ public record ProjectRequest(
 
         @Size(max = 500) String repoUrl,
 
-        @NotNull(message = "Trạng thái không được để trống") ProjectStatus status
+        @NotNull(message = "Trạng thái không được để trống") ProjectStatus status,
+
+        /** Tên tag do người dùng gõ; slug được sinh tự động ở tầng service. */
+        @Size(max = 10, message = "Tối đa 10 tag cho mỗi dự án") List<@Size(max = 50, message = "Tên tag tối đa 50 ký tự") String> tags
 
 ) {
-
+        public List<String> tagsOrEmpty() {
+                return tags == null ? List.of() : tags;
+        }
 }

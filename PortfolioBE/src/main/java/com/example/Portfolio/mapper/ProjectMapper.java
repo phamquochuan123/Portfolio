@@ -1,12 +1,19 @@
 package com.example.Portfolio.mapper;
 
+import java.util.List;
+
 import com.example.Portfolio.dto.ProjectDetailResponse;
 import com.example.Portfolio.dto.ProjectSummaryResponse;
+import com.example.Portfolio.dto.TagResponse;
 import com.example.Portfolio.entity.Project;
 
 public final class ProjectMapper {
     private ProjectMapper() {
 
+    }
+
+    private static List<TagResponse> tags(Project project) {
+        return project.getTags().stream().map(TagResponse::from).toList();
     }
 
     public static ProjectSummaryResponse toSummary(Project project) {
@@ -16,7 +23,8 @@ public final class ProjectMapper {
                 project.getSlug(),
                 project.getSummary(),
                 project.getThumbnailUrl(),
-                project.getPublishedAt());
+                project.getPublishedAt(),
+                tags(project));
     }
 
     public static ProjectDetailResponse toDetail(Project project) {
@@ -31,7 +39,8 @@ public final class ProjectMapper {
                 project.getRepoUrl(),
                 project.getStatus(),
                 project.getViewCount(),
-                project.getPublishedAt()
+                project.getPublishedAt(),
+                tags(project)
 
         );
     }

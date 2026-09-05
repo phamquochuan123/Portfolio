@@ -1,6 +1,7 @@
 package com.example.Portfolio.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record ProjectSummaryResponse(
                 Long id,
@@ -8,5 +9,6 @@ public record ProjectSummaryResponse(
                 String slug,
                 String summary,
                 String thumbnailUrl,
-                LocalDateTime publishedAt) {
+                LocalDateTime publishedAt,
+                List<TagResponse> tags) {
 }

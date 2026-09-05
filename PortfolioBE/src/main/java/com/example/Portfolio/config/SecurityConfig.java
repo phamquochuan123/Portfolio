@@ -1,7 +1,9 @@
 package com.example.Portfolio.config;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,6 +28,9 @@ public class SecurityConfig {
         private final JwtAuthenticationFilter jwtAuthenticationFilter;
         private final JwtAuthenticationEntryPoint authenticationEntryPoint;
         private final JwtAccessDeniedHandler accessDeniedHandler;
+
+        @Value("${app.cors.origins}")
+        private String corsOrigins;
 
         public SecurityConfig(
                         JwtAccessDeniedHandler accessDeniedHandler,
@@ -59,8 +64,16 @@ public class SecurityConfig {
                                                                 "/swagger-ui/**",
                                                                 "/swagger-ui.html")
                                                 .permitAll()
+                                                // Không mở /error thì mọi exception bị chuyển tiếp tới đây sẽ rơi vào
+                                                // anyRequest().authenticated() và trả về 401 — lỗi 500 đội lốt lỗi đăng nhập.
+                                                .requestMatchers("/error").permitAll()
                                                 .requestMatchers("/api/auth/**").permitAll()
+                                                // Dịch vụ giám sát uptime cần gọi được health mà không có token.
+                                                .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**")
+                                                .permitAll()
+                                                .requestMatchers("/actuator/**").hasRole("ADMIN")
                                                 .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/tags").permitAll()
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                                 .requestMatchers(HttpMethod.POST, "/api/contacts").permitAll()
                                                 .anyRequest().authenticated())
@@ -73,8 +86,11 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
-                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.setAllowedOrigins(Arrays.stream(corsOrigins.split(","))
+                                .map(String::trim)
+                                .filter(origin -> !origin.isEmpty())
+                                .toList());
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(List.of("*"));
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

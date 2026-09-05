@@ -1,1 +1,37 @@
 @import "tailwindcss";
+
+/* Đổi màu nhấn của cả site ở đúng một chỗ này. */
+@theme {
+    --color-accent: var(--color-emerald-400);
+    --color-accent-strong: var(--color-emerald-300);
+    --color-accent-muted: var(--color-emerald-500);
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-zinc-950 text-zinc-100 antialiased;
+    }
+
+    /* Viền focus mặc định cho mọi phần tử tương tác chưa tự khai báo. */
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-accent;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}

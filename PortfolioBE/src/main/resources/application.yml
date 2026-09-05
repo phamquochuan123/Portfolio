@@ -48,6 +48,9 @@ app:
     expiration-ms: 3600000
   cache:
     ttl-minutes: 10
+  cors:
+    # Khi deploy FE, thêm domain vào biến môi trường APP_CORS_ORIGINS (ngăn cách bằng dấu phẩy).
+    origins: ${APP_CORS_ORIGINS:http://localhost:5173,http://localhost:5174}
 
 server:
   port: ${PORT:8080}
@@ -56,10 +59,26 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: never
+      # Khách chỉ thấy UP/DOWN; chi tiết từng thành phần chỉ hiện với ADMIN.
+      show-details: when-authorized
+      roles: ADMIN
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+
+info:
+  app:
+    name: Portfolio API
+    description: Backend cho portfolio cá nhân của Phạm Quốc Huân
 
 logging:
   level:

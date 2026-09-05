@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("api/projects")
@@ -25,13 +26,16 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<ProjectSummaryResponse> getPublishedProjects() {
-        return projectService.getPublishedProjects();
+    public List<ProjectSummaryResponse> getPublishedProjects(
+            @RequestParam(required = false) String tag) {
+        return projectService.getPublishedProjects(tag);
     }
 
     @GetMapping("/{slug}")
     public ProjectDetailResponse getProjectBySlug(@PathVariable String slug) {
-        return projectService.getBySlug(slug);
+        ProjectDetailResponse project = projectService.getBySlug(slug);
+        projectService.recordView(slug);
+        return project;
     }
 
 }

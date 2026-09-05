@@ -1,6 +1,7 @@
 package com.example.Portfolio.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.example.Portfolio.entity.ProjectStatus;
 
@@ -15,7 +16,8 @@ public record ProjectDetailResponse(
                 String repoUrl,
                 ProjectStatus status,
                 Long viewCount,
-                LocalDateTime publishedAt
+                LocalDateTime publishedAt,
+                List<TagResponse> tags
 
 ) {
 }

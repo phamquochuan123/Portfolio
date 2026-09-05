@@ -22,13 +22,7 @@
 | 4–5 | Trang 404, loading state, empty state |
 | 6 | SEO: sitemap, robots.txt, hoàn thiện README |
 
-## Hoãn sau 25/09 — KHÔNG làm bây giờ
 
-- Blog / bài viết
-- Dashboard thống kê
-- Tìm kiếm theo tag
-- Spring Actuator
-- Đa ngôn ngữ (i18n)
 
 ## Loại hẳn — không làm ở dự án này
 
